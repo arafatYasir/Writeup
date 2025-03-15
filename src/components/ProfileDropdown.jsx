@@ -8,7 +8,7 @@ import { PiBookmarksSimpleThin } from "react-icons/pi";
 import SignInModal from "./AuthenticationModal";
 
 const ProfileDropdown = ({ setShowModal}) => {
-    const { user } = useContext(AuthContext);
+    const { user, signOutUser } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
     const buttonRef = useRef(null);
@@ -43,7 +43,7 @@ const ProfileDropdown = ({ setShowModal}) => {
                             <li className="hover:text-black"><NavLink className="flex items-center gap-3" ><PiBookmarksSimpleThin size={26} />Bookmarks</NavLink></li>
 
                             {user ?
-                                <button className="bg-[#191919] text-white text-[16px] cursor-pointer py-1 font-semibold hover:bg-black transition rounded-full">Sign out</button>
+                                <button onClick={() => {signOutUser(); setIsOpen(false)}} className="bg-[#191919] text-white text-[16px] cursor-pointer py-1 font-semibold hover:bg-black transition rounded-full">Sign out</button>
                                 :
                                 <button onClick={() => {setShowModal(true); setIsOpen(false)}} className="bg-[#191919] text-white text-[16px] cursor-pointer py-1 font-semibold hover:bg-black transition rounded-full">Sign in</button>
                             }

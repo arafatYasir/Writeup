@@ -10,7 +10,8 @@ import { AuthContext } from "../providers/AuthProvider";
 const AuthenticationModal = ({ modalContent, setModalContent, setShowModal }) => {
     const [formData, setFormData] = useState({ name: "", email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
-    const {signInWithGoogle} = useContext(AuthContext);
+    const [errorMessage, setErrorMessage] = useState("");
+    const {signInWithGoogle, createUser} = useContext(AuthContext);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -28,6 +29,40 @@ const AuthenticationModal = ({ modalContent, setModalContent, setShowModal }) =>
             setShowModal(false);
         })
         .catch(error => console.log(error.message))
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/;
+
+        // getting form values
+        const name = formData.name;
+        const email = formData.email;
+        const password = formData.password;
+
+        if(name.length < 4) {
+            setErrorMessage("Name should at least contain 4 characters.");
+            return;
+        }
+        if(!emailRegex.test(email)) {
+            setErrorMessage("Please enter a valid email.");
+            return;
+        }
+        if(!passwordRegex.test(password)) {
+            setErrorMessage("Password must be at least 6 characters long, and include uppercase, lowercase, and a number.");
+            return;
+        }
+
+        // creating a user with email and password
+        createUser(email, password)
+        .then(res => console.log(res.user))
+        .catch(err => console.log(err.message))
+
+
+        // resetting form values
+        setFormData({name: "", email: "", password: ""});
     }
 
     return (
@@ -71,7 +106,7 @@ const AuthenticationModal = ({ modalContent, setModalContent, setShowModal }) =>
                                 < h2 className="text-center text-[28px] leading-8 mt-2">Join Writeup</h2>
 
                                 {/* Sign up form */}
-                                <form className="mt-6 w-[300px] space-y-4">
+                                <form onSubmit={handleSubmit} className="mt-6 w-[350px] space-y-4">
                                     <div>
                                         <input
                                             type="text"
@@ -104,7 +139,7 @@ const AuthenticationModal = ({ modalContent, setModalContent, setShowModal }) =>
                                             className="w-full border rounded-md p-3 focus:outline-none"
                                             required
                                         />
-                                        <button type="button" onClick={() => setShowPassword(!showPassword)}>
+                                        <button className="cursor-pointer" type="button" onClick={() => setShowPassword(!showPassword)}>
                                             {
                                                 showPassword ? 
                                                 <LuEyeClosed className="absolute top-[50%] right-2 translate-y-[-50%]" size={18} />
@@ -113,7 +148,7 @@ const AuthenticationModal = ({ modalContent, setModalContent, setShowModal }) =>
                                             }
                                         </button>
                                     </div>
-
+                                    <p className="text-red-500">{errorMessage}</p>
                                     <button
                                         type="submit"
                                         className="w-full bg-green-600 text-white py-3 rounded-full font-medium hover:bg-green-700 transition duration-300"
