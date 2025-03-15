@@ -2,12 +2,10 @@ import { IoCloseOutline } from "react-icons/io5";
 import googleIcon from "../assets/images/google-icon.webp"
 import { CiMail } from "react-icons/ci";
 import { Link } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { LuEyeClosed } from "react-icons/lu";
 import { IoEyeOutline } from "react-icons/io5";
 import { AuthContext } from "../providers/AuthProvider";
-import { onAuthStateChanged } from "firebase/auth";
-import auth from "../firebase/firebase.config";
 
 const AuthenticationModal = ({ modalContent, setModalContent, setShowModal }) => {
     const [formData, setFormData] = useState({ name: "", email: "", password: "" });

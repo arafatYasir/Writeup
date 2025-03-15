@@ -28,9 +28,9 @@ const ProfileDropdown = ({ setShowModal}) => {
     return (
         <div className="relative">
             {/* Profile Icon */}
-            <button ref={buttonRef} onClick={() => setIsOpen(!isOpen)} className="cursor-pointer">
+            <button ref={buttonRef} onClick={() => setIsOpen(!isOpen)} className={`cursor-pointer flex items-center gap-1 ${user && "md:bg-[#6b6b6b77] md:py-1 md:px-2 md:rounded-xl"}`}>
                 <RxAvatar size={33} />
-                {user && user.displayName}
+                <span className="hidden md:inline">{user && user.displayName}</span>
             </button>
 
             {/* Dropdown menu */}
