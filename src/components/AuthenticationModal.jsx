@@ -2,19 +2,34 @@ import { IoCloseOutline } from "react-icons/io5";
 import googleIcon from "../assets/images/google-icon.webp"
 import { CiMail } from "react-icons/ci";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { LuEyeClosed } from "react-icons/lu";
+import { IoEyeOutline } from "react-icons/io5";
+import { AuthContext } from "../providers/AuthProvider";
+import { onAuthStateChanged } from "firebase/auth";
+import auth from "../firebase/firebase.config";
 
 const AuthenticationModal = ({ modalContent, setModalContent, setShowModal }) => {
-    const [formData, setFormData] = useState({name: "", email: "", password: ""});
+    const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+    const [showPassword, setShowPassword] = useState(false);
+    const {signInWithGoogle} = useContext(AuthContext);
 
     const handleChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setFormData(prev => (
             {
                 ...prev,
                 [name]: value
             }
         ));
+    }
+
+    const handleSignInGoogle = () => {
+        signInWithGoogle()
+        .then(res => {
+            setShowModal(false);
+        })
+        .catch(error => console.log(error.message))
     }
 
     return (
@@ -35,7 +50,7 @@ const AuthenticationModal = ({ modalContent, setModalContent, setShowModal }) =>
 
                                 {/* Sign in buttons */}
                                 <div className="mt-12 w-[300px] space-y-3">
-                                    <button className="flex items-center justify-between w-full border p-2 rounded-full cursor-pointer">
+                                    <button onClick={handleSignInGoogle} className="flex items-center justify-between w-full border p-2 rounded-full cursor-pointer">
                                         <img className="w-6" src={googleIcon} alt="Google Icon" />
                                         <span>Sign in with Google</span>
                                         <div className="w-6"></div> {/* An empty div to balance the layout */}
@@ -59,34 +74,51 @@ const AuthenticationModal = ({ modalContent, setModalContent, setShowModal }) =>
 
                                 {/* Sign up form */}
                                 <form className="mt-6 w-[300px] space-y-4">
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        placeholder="Full Name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        className="w-full border rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                    />
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        placeholder="Email Address"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        className="w-full border rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                    />
-                                    <input
-                                        type="password"
-                                        name="password"
-                                        placeholder="Password"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        className="w-full border rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                    />
+                                    <div>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            placeholder="Full Name"
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                            className="w-full border rounded-md p-3 focus:outline-none"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            placeholder="Email Address"
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                            className="w-full border rounded-md p-3 focus:outline-none"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="relative">
+                                        <input
+                                            type={`${showPassword ? "text" : "password"}`}
+                                            name="password"
+                                            placeholder="Password"
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                            className="w-full border rounded-md p-3 focus:outline-none"
+                                            required
+                                        />
+                                        <button type="button" onClick={() => setShowPassword(!showPassword)}>
+                                            {
+                                                showPassword ? 
+                                                <LuEyeClosed className="absolute top-[50%] right-2 translate-y-[-50%]" size={18} />
+                                                :
+                                                <IoEyeOutline className="absolute top-[50%] right-2 translate-y-[-50%]" size={19} />
+                                            }
+                                        </button>
+                                    </div>
 
                                     <button
                                         type="submit"
-                                        className="w-full bg-green-600 text-white py-3 rounded-full font-medium hover:bg-green-700 transition duration-200"
+                                        className="w-full bg-green-600 text-white py-3 rounded-full font-medium hover:bg-green-700 transition duration-300"
                                     >
                                         Sign Up
                                     </button>
