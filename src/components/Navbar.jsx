@@ -5,7 +5,7 @@ import { CiSearch } from "react-icons/ci";
 import { SlNote } from "react-icons/sl";
 import ProfileDropdown from "./ProfileDropdown";
 
-const Navbar = () => {
+const Navbar = ({setShowModal}) => {
     return (
         <nav className="">
             <div className="flex items-center justify-between py-4 border-b border-b-[#6B6B6B]">
@@ -21,7 +21,8 @@ const Navbar = () => {
 
                 <ul className="flex items-center gap-7">
                     <li className="text-[#6B6B6B] text-[15px] hover:text-black "><NavLink to="create-blog" className="flex gap-2" ><SlNote size={21} />Write</NavLink></li>
-                    <ProfileDropdown />
+
+                    <ProfileDropdown setShowModal={setShowModal} />
                 </ul>
             </div>
             {/* <hr className="text-[#ff0000]" /> */}

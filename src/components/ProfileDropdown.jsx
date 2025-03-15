@@ -1,12 +1,13 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { RxAvatar } from "react-icons/rx";
 import { AuthContext } from "../providers/AuthProvider";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { LuUser } from "react-icons/lu";
 import { BsReverseLayoutTextSidebarReverse } from "react-icons/bs";
 import { PiBookmarksSimpleThin } from "react-icons/pi";
+import SignInModal from "./AuthenticationModal";
 
-const ProfileDropdown = () => {
+const ProfileDropdown = ({ setShowModal}) => {
     const { user } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -42,9 +43,9 @@ const ProfileDropdown = () => {
                             <li className="hover:text-black"><NavLink className="flex items-center gap-3" ><PiBookmarksSimpleThin size={26} />Bookmarks</NavLink></li>
 
                             {user ?
-                                <button className="border text-[16px] cursor-pointer py-1 font-semibold hover:bg-[#6b6b6b76] transition">Log Out</button>
+                                <button className="bg-[#191919] text-white text-[16px] cursor-pointer py-1 font-semibold hover:bg-black transition rounded-full">Sign out</button>
                                 :
-                                <button className="border text-[16px] cursor-pointer py-1 font-semibold hover:bg-[#6b6b6b76] transition">Sign in</button>
+                                <button onClick={() => {setShowModal(true); setIsOpen(false)}} className="bg-[#191919] text-white text-[16px] cursor-pointer py-1 font-semibold hover:bg-black transition rounded-full">Sign in</button>
                             }
                         </ul>
                     </div>
