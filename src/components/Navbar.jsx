@@ -4,8 +4,11 @@ import { Link, NavLink } from "react-router-dom";
 import { CiSearch } from "react-icons/ci";
 import { SlNote } from "react-icons/sl";
 import ProfileDropdown from "./ProfileDropdown";
+import { ToastContainer } from "react-toastify";
+import { useContext } from "react";
 
-const Navbar = ({ setShowModal }) => {
+const Navbar = () => {
+    const {setShowModal} = useContext(AuthContext);
     return (
         <nav className="">
             <div className="flex items-center justify-between py-4 border-b border-b-[#e7e7e7]">

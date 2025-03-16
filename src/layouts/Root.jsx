@@ -1,18 +1,18 @@
 import { Outlet } from "react-router-dom";
 import { AuthContext } from "../providers/AuthProvider";
 import Navbar from "../components/Navbar";
-import { useState } from "react";
+import { useContext } from "react";
 import AuthenticationModal from "../components/AuthenticationModal";
 
 const Root = () => {
-    const [showModal, setShowModal] = useState(false);
-    const [modalContent, setModalContent] = useState("signin");
+    const {showModal} = useContext(AuthContext);
+    
     return (
         <div className="container mx-auto font-inter">
-            <Navbar showModal={showModal} setShowModal={setShowModal} />
+            <Navbar />
 
             {
-                showModal && <AuthenticationModal modalContent={modalContent} setModalContent={setModalContent} setShowModal={setShowModal} />
+                showModal && <AuthenticationModal />
             }
 
             <Outlet />

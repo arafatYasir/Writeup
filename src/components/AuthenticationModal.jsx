@@ -12,7 +12,8 @@ import { MdKeyboardArrowLeft } from "react-icons/md";
 import { LiaPassportSolid } from "react-icons/lia";
 import { TbFlagSearch } from "react-icons/tb";
 
-const AuthenticationModal = ({ modalContent, setModalContent, setShowModal }) => {
+const AuthenticationModal = () => {
+    const { modalContent, setModalContent, setShowModal } = useContext(AuthContext);
     const [formData, setFormData] = useState({ name: "", email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");

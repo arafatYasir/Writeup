@@ -4,8 +4,7 @@ import { LiaCommentSolid } from "react-icons/lia";
 import { CiBookmark } from "react-icons/ci";
 
 const Blog = ({ blog }) => {
-    console.log(blog);
-    const { title, description, author, likes, comments, banner_image, date } = blog;
+    const { title, description, author, likes, comments, banner_image, date, id } = blog;
     const realDate = date.toDate();
     const formattedDate = realDate.toLocaleDateString("en-US", {
         year: "numeric", month: "long", day: "numeric"
@@ -19,7 +18,7 @@ const Blog = ({ blog }) => {
             </div>
 
             {/* Title & Description */}
-            <Link>
+            <Link to={`/blogs/${id}`}>
                 <h2 className="text-xl font-bold leading-7 text-gray-900 hover:underline">{title}</h2>
                 <p className="mt-2 text-gray-600 text-sm leading-6">
                     {description.slice(0, 150)}...

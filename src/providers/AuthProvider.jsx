@@ -5,9 +5,11 @@ import auth from "../firebase/firebase.config";
 export const AuthContext = createContext(null);
 const googleProvider = new GoogleAuthProvider();
 
-const AuthProvider = ({children}) => {
+const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    const [modalContent, setModalContent] = useState("signin");
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -39,7 +41,11 @@ const AuthProvider = ({children}) => {
         signInWithGoogle,
         createUser,
         signInUser,
-        signOutUser
+        signOutUser,
+        showModal,
+        setShowModal,
+        modalContent,
+        setModalContent
     }
     return (
         <AuthContext.Provider value={authInfo}>
