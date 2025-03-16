@@ -27,7 +27,7 @@ const Home = () => {
     }, []);
     return (
         <div>
-                <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 mt-12 px-5 gap-6">
                     {
                         blogs.map(blog => <Blog key={blog.id} blog={blog} />)
                     }

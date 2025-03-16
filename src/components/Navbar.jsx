@@ -8,7 +8,7 @@ import ProfileDropdown from "./ProfileDropdown";
 const Navbar = ({ setShowModal }) => {
     return (
         <nav className="">
-            <div className="flex items-center justify-between py-4 border-b border-b-[#6B6B6B]">
+            <div className="flex items-center justify-between py-4 border-b border-b-[#e7e7e7]">
                 <div className="flex items-center gap-5">
                     <div>
                         <Link to="/">
@@ -27,7 +27,6 @@ const Navbar = ({ setShowModal }) => {
                     <ProfileDropdown setShowModal={setShowModal} />
                 </ul>
             </div>
-            {/* <hr className="text-[#ff0000]" /> */}
         </nav>
     );
 };
