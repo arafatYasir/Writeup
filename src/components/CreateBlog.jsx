@@ -50,8 +50,9 @@ const CreateBlog = () => {
                     email: user.email,
                     name: user.displayName
                 },
-                likes: parseInt(Math.random() * 25),
-                comments: parseInt(Math.random() * 25),
+                likes: 0,
+                comments_count: 0,
+                comments: [],
                 banner_image: imageUrl
             });
             // showing a success toast

@@ -4,7 +4,7 @@ import { LiaCommentSolid } from "react-icons/lia";
 import { CiBookmark } from "react-icons/ci";
 
 const Blog = ({ blog }) => {
-    const { title, description, author, likes, comments, banner_image, date, id } = blog;
+    const { title, description, author, likes, comments_count, banner_image, date, id } = blog;
     const realDate = date.toDate();
     const formattedDate = realDate.toLocaleDateString("en-US", {
         year: "numeric", month: "long", day: "numeric"
@@ -38,9 +38,9 @@ const Blog = ({ blog }) => {
                         <span>{likes}</span>
                     </div>
 
-                    <div className="flex items-center gap-1" title={`${comments} Comments`}>
+                    <div className="flex items-center gap-1" title={`${comments_count} Comments`}>
                         <LiaCommentSolid size={18} />
-                        <span>{comments}</span>
+                        <span>{comments_count}</span>
                     </div>
                 </div>
 
