@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {db} from "../firebase/firebase.config"
 import Blog from "../components/Blog";
 import { collection, getDocs } from "firebase/firestore";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const Home = () => {
     const [blogs, setBlogs] = useState([]);
@@ -20,7 +20,7 @@ const Home = () => {
                 setBlogs(blogsList);
             }
             catch (error) {
-                console.log("Error fetching blogs");
+                toast.error(error.message);
             }
         }
 

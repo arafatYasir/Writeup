@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, onSnapshot, serverTimestamp } from "firebase/firestore";
+import { addDoc, arrayUnion, collection, doc, getDoc, onSnapshot, serverTimestamp, updateDoc } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../firebase/firebase.config";
@@ -59,16 +59,34 @@ const BlogDetails = () => {
             toast.error("Dont left the comment empty.");
             return;
         }
+
         setLoading(true);
+
         try {
             const commentRef = collection(db, "blogs", blogId, "comments");
+            const blogRef = doc(db, "blogs", blogId);
+
+            // updating inside the state
+            setBlog(prev => ({
+                ...prev,
+                comments_count: prev.comments_count + 1
+            }));
+
+            // updating the comment count in firestore
+            await updateDoc(blogRef, {
+                comments_count: blog.comments_count + 1
+            });
+
+            // adding the comment in firestore
             await addDoc(commentRef, {
                 name: user.displayName,
                 email: user.email,
                 comment: comment.trim(),
                 date: serverTimestamp()
             });
+
             toast.success("Comment added!");
+
             setComment("");
             setLoading(false);
         }
@@ -77,9 +95,63 @@ const BlogDetails = () => {
         }
     }
 
+    // adding upvote for a blog
+    const handleUpvote = async () => {
+        if(!user) {
+            toast.error("Please login to upvote.");
+            return;
+        }
+
+        // getting the blog ref
+        const blogRef = doc(db, "blogs", blogId);
+
+        // if the user already had upvoted and now clicking again
+        if(blog.upvotedBy?.includes(user?.email)) {
+            try {
+                // decreasing the like and updating the state
+                setBlog(prev => ({
+                    ...prev,
+                    likes: prev.likes - 1,
+                    upvotedBy: prev.upvotedBy.filter(email => email !== user.email)
+                }));
+
+                // updating in firestore
+                await updateDoc(blogRef, {
+                    likes: blog.likes - 1,
+                    upvotedBy: blog.upvotedBy.filter(email => email !== user.email)
+                });
+            }
+            catch(error) {
+                toast.error(error.message);
+            }
+            return;
+        }
+
+        // if the user is clicking for the first time
+        try {
+            // updating inside the state
+            setBlog(prev => ({
+                ...prev,
+                likes: prev.likes + 1,
+                upvotedBy: [...(prev.upvotedBy || []), user.email]
+            }));
+
+            // updating in firestore
+            await updateDoc(blogRef, {
+                likes: blog.likes + 1,
+                upvotedBy: arrayUnion(user.email)
+            });
+
+            toast.success("Upvoted!");
+        }
+        catch (error) {
+            toast.error(error.message);
+        }
+    }
+
     if (blog === null) return <p>Loading...</p>;
 
-    const { title, description, author, likes, comments_count, banner_image, date } = blog;
+    const { title, description, author, comments_count, upvotedBy, banner_image, date } = blog;
 
     // formatting the timestamp to a real date
     const realDate = date.toDate();
@@ -90,26 +162,31 @@ const BlogDetails = () => {
     return (
         <div className="max-w-4xl mx-auto p-4">
             <div className="text-center mb-6">
-                <h1 className="text-3xl font-bold">{title}</h1>
-                <p className="text-sm text-gray-600">by {author.name} | {formattedDate}</p>
+                <h1 className="text-[42px] font-bold mt-14 text-[#242424]">{title}</h1>
+                <p className="text-[15px] text-gray-600 mt-1">by <span className="font-semibold">{author.name}</span> | <span className="font-semibold">{formattedDate}</span></p>
             </div>
 
             <div className="mb-6">
-                <img src={banner_image} alt={title} className="w-full h-[300px] object-cover rounded-lg" />
+                <img src={banner_image} alt={title} className="w-full h-auto object-cover rounded-lg" />
             </div>
 
-            <div className="max-w-none mb-6" data-color-mode="light">
+            <div className="max-w-none mb-6 markdown">
                 {/* Rendering the description as Markdown */}
                 <MDEditor.Markdown source={description} />
             </div>
 
             <div className="flex justify-between items-center mt-4">
                 <div className="text-[#242424] flex items-center gap-4">
-                    <span className="flex items-center gap-1" title={`${likes} Upvotes`}>
-                        <BiUpvote size={25} /> {likes}
+                    <span
+                        className={`flex items-center gap-1 cursor-pointer ${blog.upvotedBy?.includes(user?.email) ? "text-blue-600" : ""
+                            }`}
+                        onClick={handleUpvote}
+                        title={`${upvotedBy.length} Upvotes`}
+                    >
+                        <BiUpvote size={25} /> {upvotedBy.length}
                     </span>
-                    <span className="flex items-center gap-1" title={`${comments.length} Comments`}>
-                        <LiaCommentSolid size={25} /> {comments.length}
+                    <span className="flex items-center gap-1" title={`${comments_count} Comments`}>
+                        <LiaCommentSolid size={25} /> {comments_count}
                     </span>
                 </div>
 
