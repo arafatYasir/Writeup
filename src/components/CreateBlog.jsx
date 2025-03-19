@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { AuthContext } from "../providers/AuthProvider";
 import { toast, ToastContainer } from "react-toastify";
 import { addDoc, collection } from "firebase/firestore";
@@ -12,7 +12,7 @@ const CreateBlog = () => {
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const handleChange = (e) => {
+    const handleChange = useCallback((e) => {
         const { name, value } = e.target;
         setBlogData(prev => (
             {
@@ -22,15 +22,13 @@ const CreateBlog = () => {
         ));
 
         console.log(e.target);
-    }
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         // getting all form values
-        const title = blogData.title;
-        const imageUrl = blogData.imageUrl;
-        const description = blogData.description;
+        const {title, imageUrl, description} = blogData;
 
         // checking if all values are prvided
         if (!title || !imageUrl || !description) {
@@ -59,15 +57,15 @@ const CreateBlog = () => {
             // resetting the form
             setBlogData({title: "", description: "", imageUrl: ""});
 
-            setLoading(false);
-
             // navigating to the blog
             navigate(`/blogs/${docRef.id}`);
         }
         catch(error) {
             toast.error("Error adding the blog.");
             console.log(error.message);
-            setLoading(false)
+        }
+        finally {
+            setLoading(false);
         }
     }
 

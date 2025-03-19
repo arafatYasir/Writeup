@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import { BiUpvote } from "react-icons/bi";
 import { LiaCommentSolid } from "react-icons/lia";
 import { CiBookmark } from "react-icons/ci";
+import React from "react"
 
-const Blog = ({ blog }) => {
+const Blog = React.memo(({ blog }) => {
     const { title, description, author, upvotedBy, comments_count, banner_image, date, id } = blog;
     const realDate = date.toDate();
     const formattedDate = realDate.toLocaleDateString("en-US", {
@@ -32,9 +33,9 @@ const Blog = ({ blog }) => {
                 <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 text-gray-700 text-sm">
                     <p>Author: <span className="font-semibold">{author.name}</span></p>
 
-                    <div className="flex items-center gap-1" title={`${upvotedBy.length} Upvotes`}>
+                    <div className="flex items-center gap-1" title={`${upvotedBy?.length} Upvotes`}>
                         <BiUpvote size={18} />
-                        {upvotedBy.length}
+                        {upvotedBy?.length}
                     </div>
                     <div className="flex items-center gap-1" title={`${comments_count} Comments`}>
                         <LiaCommentSolid size={20} />
@@ -47,6 +48,6 @@ const Blog = ({ blog }) => {
             </div>
         </div>
     );
-};
+});
 
 export default Blog;

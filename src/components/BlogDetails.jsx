@@ -178,12 +178,12 @@ const BlogDetails = () => {
             <div className="flex justify-between items-center mt-4">
                 <div className="text-[#242424] flex items-center gap-4">
                     <span
-                        className={`flex items-center gap-1 cursor-pointer ${blog.upvotedBy?.includes(user?.email) ? "text-blue-600" : ""
+                        className={`flex items-center gap-1 cursor-pointer ${blog?.upvotedBy?.includes(user?.email) ? "text-blue-600" : ""
                             }`}
                         onClick={handleUpvote}
-                        title={`${upvotedBy.length} Upvotes`}
+                        title={`${upvotedBy?.length} Upvotes`}
                     >
-                        <BiUpvote size={25} /> {upvotedBy.length}
+                        <BiUpvote size={25} /> {upvotedBy ? upvotedBy.length : 0}
                     </span>
                     <span className="flex items-center gap-1" title={`${comments_count} Comments`}>
                         <LiaCommentSolid size={25} /> {comments_count}
