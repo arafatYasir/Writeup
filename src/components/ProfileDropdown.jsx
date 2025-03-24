@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { RxAvatar } from "react-icons/rx";
 import { AuthContext } from "../providers/AuthProvider";
 import { Link, NavLink } from "react-router-dom";
@@ -13,17 +13,17 @@ const ProfileDropdown = ({ setShowModal }) => {
     const dropdownRef = useRef(null);
     const buttonRef = useRef(null);
 
+    const handleClick = useCallback((e) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(e.target) && !buttonRef.current.contains(e.target)) {
+            setIsOpen(false);
+        }
+    }, []);
+
     // closing dropdown if user clicks outside
     useEffect(() => {
-        const handleClick = (e) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(e.target) && !buttonRef.current.contains(e.target)) {
-                setIsOpen(false);
-            }
-        }
-
         document.addEventListener("mousedown", handleClick);
-        return () => document.addEventListener("mousedown", handleClick);
-    }, []);
+        return () => document.removeEventListener("mousedown", handleClick);
+    }, [handleClick]);
 
     return (
         <div className="relative">

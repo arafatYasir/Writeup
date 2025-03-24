@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import auth from "../firebase/firebase.config";
 
 export const AuthContext = createContext(null);
@@ -19,23 +19,24 @@ const AuthProvider = ({ children }) => {
         return () => unsubscribe();
     }, []);
 
-    const signInWithGoogle = () => {
+    // memorized functions to optimize performance
+    const signInWithGoogle = useCallback(() => {
         return signInWithPopup(auth, googleProvider);
-    }
+    }, []);
 
-    const createUser = (email, password) => {
+    const createUser = useCallback((email, password) => {
         return createUserWithEmailAndPassword(auth, email, password);
-    }
+    }, []);
 
-    const signInUser = (email, password) => {
+    const signInUser = useCallback((email, password) => {
         return signInWithEmailAndPassword(auth, email, password);
-    }
+    }, []);
 
-    const signOutUser = () => {
+    const signOutUser = useCallback(() => {
         return signOut(auth);
-    }
+    }, []);
 
-    const authInfo = {
+    const authInfo = useMemo(() => ({
         user,
         loading,
         signInWithGoogle,
@@ -46,7 +47,18 @@ const AuthProvider = ({ children }) => {
         setShowModal,
         modalContent,
         setModalContent
-    }
+    }), [
+        user,
+        loading,
+        signInWithGoogle,
+        createUser,
+        signInUser,
+        signOutUser,
+        showModal,
+        setShowModal,
+        modalContent,
+        setModalContent
+    ])
     return (
         <AuthContext.Provider value={authInfo}>
             {children}

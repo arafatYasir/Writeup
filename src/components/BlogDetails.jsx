@@ -1,11 +1,10 @@
 import { addDoc, arrayUnion, collection, doc, getDoc, onSnapshot, serverTimestamp, updateDoc } from "firebase/firestore";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../firebase/firebase.config";
 import MDEditor from "@uiw/react-md-editor";
 import { AuthContext } from "../providers/AuthProvider";
 import { toast, ToastContainer } from "react-toastify";
-
 import { BiUpvote } from "react-icons/bi";
 import { LiaCommentSolid } from "react-icons/lia";
 import Comment from "./Comment";
@@ -17,6 +16,7 @@ const BlogDetails = () => {
     const { user } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
     const [comments, setComments] = useState([]);
+    const [isUpvoting, setIsUpvoting] = useState(false);
 
     // loading specific blogs details
     useEffect(() => {
@@ -97,7 +97,7 @@ const BlogDetails = () => {
 
     // adding upvote for a blog
     const handleUpvote = async () => {
-        if(!user) {
+        if (!user) {
             toast.error("Please login to upvote.");
             return;
         }
@@ -105,9 +105,10 @@ const BlogDetails = () => {
         // getting the blog ref
         const blogRef = doc(db, "blogs", blogId);
 
-        // if the user already had upvoted and now clicking again
-        if(blog.upvotedBy?.includes(user?.email)) {
-            try {
+        setIsUpvoting(true);
+        try {
+            // if the user already had upvoted and now clicking again
+            if (blog.upvotedBy?.includes(user?.email)) {
                 // decreasing the like and updating the state
                 setBlog(prev => ({
                     ...prev,
@@ -120,32 +121,32 @@ const BlogDetails = () => {
                     likes: blog.likes - 1,
                     upvotedBy: blog.upvotedBy.filter(email => email !== user.email)
                 });
+
             }
-            catch(error) {
-                toast.error(error.message);
+            // if the user is clicking for the first time
+            else {
+                // increasing upvote inside the state
+                setBlog(prev => ({
+                    ...prev,
+                    likes: prev.likes + 1,
+                    upvotedBy: [...(prev.upvotedBy || []), user.email]
+                }));
+
+                // updating in firestore
+                await updateDoc(blogRef, {
+                    likes: blog.likes + 1,
+                    upvotedBy: arrayUnion(user.email)
+                });
+
+                toast.success("Upvoted!");
             }
-            return;
-        }
 
-        // if the user is clicking for the first time
-        try {
-            // updating inside the state
-            setBlog(prev => ({
-                ...prev,
-                likes: prev.likes + 1,
-                upvotedBy: [...(prev.upvotedBy || []), user.email]
-            }));
-
-            // updating in firestore
-            await updateDoc(blogRef, {
-                likes: blog.likes + 1,
-                upvotedBy: arrayUnion(user.email)
-            });
-
-            toast.success("Upvoted!");
         }
         catch (error) {
             toast.error(error.message);
+        }
+        finally {
+            setIsUpvoting(false);
         }
     }
 
@@ -154,10 +155,9 @@ const BlogDetails = () => {
     const { title, description, author, comments_count, upvotedBy, banner_image, date } = blog;
 
     // formatting the timestamp to a real date
-    const realDate = date.toDate();
-    const formattedDate = realDate.toLocaleDateString("en-US", {
+    const formattedDate = date?.toDate ? date.toDate().toLocaleDateString("en-US", {
         year: "numeric", month: "long", day: "numeric"
-    })
+    }) : "Unknown Date";
 
     return (
         <div className="max-w-4xl mx-auto p-4">
@@ -195,29 +195,27 @@ const BlogDetails = () => {
                 </div>
             </div>
 
-
-            {/* Comment Section */}
-            <div className="mt-10 p-4 border-t">
-                <h3 className="text-lg font-semibold mb-2">Leave a Comment</h3>
-                <form onSubmit={handleAddComment} className="flex flex-col gap-3">
+            {/* Comment adding section */}
+            <div className="mt-10 p-6 bg-white rounded-xl shadow-md border-t border-gray-200">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">Leave a Comment</h3>
+                <form onSubmit={handleAddComment} className="flex flex-col gap-4">
                     <textarea
                         rows="4"
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                         placeholder="Write your comment..."
-                        className="border rounded-md p-2 w-full"
+                        className="border border-gray-300 rounded-lg p-4 w-full text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all ease-in-out duration-200"
                     ></textarea>
                     <button
                         type="submit"
-                        className="bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+                        className="bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
                     >
-                        {
-                            loading ? "Adding..." : "Add Comment"
-                        }
+                        {loading ? "Adding..." : "Add Comment"}
                     </button>
                 </form>
             </div>
-
+            
+            {/* Showing all the comments */}
             <div className="mt-6 p-4 border-t">
                 <h3 className="text-lg font-semibold mb-2">Comments</h3>
                 <div>
