@@ -4,7 +4,7 @@ import { LiaCommentSolid } from "react-icons/lia";
 import { CiBookmark } from "react-icons/ci";
 import React from "react"
 
-const Blog = React.memo(({ blog }) => {
+const Blog = React.memo(({ blog, idx }) => {
     const { title, description, author, upvotedBy, comments_count, banner_image, date, id } = blog;
     const realDate = date.toDate();
     const formattedDate = realDate.toLocaleDateString("en-US", {
@@ -15,7 +15,7 @@ const Blog = React.memo(({ blog }) => {
         <div className="border border-gray-300 rounded-2xl p-4 shadow-sm hover:shadow-lg transition-shadow duration-200">
             {/* Banner */}
             <div className="mb-4">
-                <img className="w-full h-48 object-cover rounded-xl" src={banner_image} alt="Banner" />
+                <img className="w-full h-48 object-cover rounded-xl" loading={idx === 0 ? "eager": "lazy"} src={banner_image} alt="Banner" fetchPriority={idx === 0 ? "high" : "auto"} />
             </div>
 
             {/* Title & Description */}

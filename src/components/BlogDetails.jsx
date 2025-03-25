@@ -1,5 +1,5 @@
 import { addDoc, arrayUnion, collection, doc, getDoc, onSnapshot, serverTimestamp, updateDoc } from "firebase/firestore";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../firebase/firebase.config";
 import MDEditor from "@uiw/react-md-editor";
@@ -16,7 +16,6 @@ const BlogDetails = () => {
     const { user } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
     const [comments, setComments] = useState([]);
-    const [isUpvoting, setIsUpvoting] = useState(false);
 
     // loading specific blogs details
     useEffect(() => {
@@ -88,10 +87,12 @@ const BlogDetails = () => {
             toast.success("Comment added!");
 
             setComment("");
-            setLoading(false);
         }
         catch (error) {
             toast.error(error.message);
+        }
+        finally {
+            setLoading(false);
         }
     }
 
@@ -105,7 +106,6 @@ const BlogDetails = () => {
         // getting the blog ref
         const blogRef = doc(db, "blogs", blogId);
 
-        setIsUpvoting(true);
         try {
             // if the user already had upvoted and now clicking again
             if (blog.upvotedBy?.includes(user?.email)) {
@@ -144,9 +144,6 @@ const BlogDetails = () => {
         }
         catch (error) {
             toast.error(error.message);
-        }
-        finally {
-            setIsUpvoting(false);
         }
     }
 

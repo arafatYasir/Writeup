@@ -3,7 +3,6 @@ import { AuthContext } from "../providers/AuthProvider";
 import { toast, ToastContainer } from "react-toastify";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../firebase/firebase.config";
-import { EmailAuthCredential } from "firebase/auth/web-extension";
 import { useNavigate } from "react-router-dom";
 
 const CreateBlog = () => {

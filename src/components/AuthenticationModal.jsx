@@ -1,16 +1,12 @@
-import { IoCloseOutline } from "react-icons/io5";
-import googleIcon from "../assets/images/google-icon.webp"
+import { IoCloseOutline, IoEyeOutline } from "react-icons/io5";
 import { CiMail } from "react-icons/ci";
-import { Link } from "react-router-dom";
-import { useContext, useState } from "react";
 import { LuEyeClosed } from "react-icons/lu";
-import { IoEyeOutline } from "react-icons/io5";
+import { MdKeyboardArrowLeft } from "react-icons/md";
+import googleIcon from "../assets/images/google-icon.webp"
+import { useContext, useState } from "react";
 import { AuthContext } from "../providers/AuthProvider";
 import { updateProfile } from "firebase/auth";
 import auth from "../firebase/firebase.config";
-import { MdKeyboardArrowLeft } from "react-icons/md";
-import { LiaPassportSolid } from "react-icons/lia";
-import { TbFlagSearch } from "react-icons/tb";
 
 const AuthenticationModal = () => {
     const { modalContent, setModalContent, setShowModal } = useContext(AuthContext);

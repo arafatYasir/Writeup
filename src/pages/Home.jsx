@@ -1,12 +1,15 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
 import { db } from "../firebase/firebase.config";
-import Blog from "../components/Blog";
 import { collection, getDocs } from "firebase/firestore";
 import { toast, ToastContainer } from "react-toastify";
+import { useOutletContext } from "react-router-dom";
+
+const Blog = React.lazy(() => import("../components/Blog"));
 
 const Home = () => {
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const searchValue = useOutletContext();
 
     const fetchBlogs = useCallback(async () => {
         try {
@@ -37,7 +40,9 @@ const Home = () => {
                 <div className="text-center mt-12">No blogs available.</div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 mt-12 px-5 gap-6">
-                    {blogs.map(blog => <Blog key={blog.id} blog={blog} />)}
+                    <Suspense>
+                        {blogs.filter(blog => (blog.description.includes(searchValue) || blog.title.includes(searchValue))).map((blog, idx) => <Blog key={idx} blog={blog} idx={idx} />)}
+                    </Suspense>
                 </div>
             )}
 
