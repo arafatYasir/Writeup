@@ -36,11 +36,11 @@ const ProfileDropdown = ({ setShowModal }) => {
             {/* Dropdown menu */}
             {
                 isOpen && (
-                    <div ref={dropdownRef} className="absolute right-0 mt-2 w-60 bg-white rounded-md shadow-lg z-10 py-[25px] px-[25px]">
+                    <div ref={dropdownRef} className="absolute right-0 mt-2 w-60 bg-white rounded-md shadow-lg z-10 py-[25px] px-[25px] ">
                         <ul className="flex flex-col gap-[18px] text-[#6B6B6B] text-[15px]">
-                            <li className="hover:text-black"><Link className="flex items-center gap-3"><LuUser size={27} />Profile</Link></li>
-                            <li className="hover:text-black"><Link className="flex items-center gap-3"><BsReverseLayoutTextSidebarReverse size={20} />Your Blogs</Link></li>
-                            <li className="hover:text-black"><Link className="flex items-center gap-3" ><PiBookmarksSimpleThin size={26} />Bookmarks</Link></li>
+                            <li className="hover:text-black"><Link to="/profile" className="flex items-center gap-3"><LuUser size={27} />Profile</Link></li>
+                            <li className="hover:text-black"><Link to="/your-blogs" className="flex items-center gap-3"><BsReverseLayoutTextSidebarReverse size={20} />Your Blogs</Link></li>
+                            <li className="hover:text-black"><Link to="/bookmarks" className="flex items-center gap-3" ><PiBookmarksSimpleThin size={26} />Bookmarks</Link></li>
 
                             {user ?
                                 <button onClick={() => { signOutUser(); setIsOpen(false) }} className="bg-[#191919] text-white text-[16px] cursor-pointer py-1 font-semibold hover:bg-black transition rounded-full">Sign out</button>

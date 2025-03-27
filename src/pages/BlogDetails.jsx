@@ -7,7 +7,7 @@ import { AuthContext } from "../providers/AuthProvider";
 import { toast, ToastContainer } from "react-toastify";
 import { BiUpvote } from "react-icons/bi";
 import { LiaCommentSolid } from "react-icons/lia";
-import Comment from "./Comment";
+import Comment from "../components/Comment";
 
 const BlogDetails = () => {
     const { blogId } = useParams();

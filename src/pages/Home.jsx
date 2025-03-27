@@ -1,7 +1,7 @@
-import React, { Suspense, useCallback, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { db } from "../firebase/firebase.config";
-import { collection, getDocs } from "firebase/firestore";
-import { toast, ToastContainer } from "react-toastify";
+import { collection, onSnapshot } from "firebase/firestore";
+import { ToastContainer } from "react-toastify";
 import { useOutletContext } from "react-router-dom";
 
 const Blog = React.lazy(() => import("../components/Blog"));
@@ -11,27 +11,20 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const searchValue = useOutletContext();
 
-    const fetchBlogs = useCallback(async () => {
-        try {
-            const blogsCollection = collection(db, "blogs");
-            const snapshot = await getDocs(blogsCollection);
+    useEffect(() => {
+        const blogsCollection = collection(db, "blogs");
 
-            const blogsList = snapshot.docs.map(doc => ({
+        const unsubscribe = onSnapshot(blogsCollection, snapshot => {
+            const blogs = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
-            setBlogs(blogsList);
+            setBlogs(blogs);
             setLoading(false);
-        } catch (error) {
-            toast.error(error.message);
-            setLoading(false);
-        }
+        })
+
+        return () => unsubscribe();
     }, []);
-
-    useEffect(() => {
-        fetchBlogs();
-    }, [fetchBlogs]);
-
     return (
         <div>
             {loading ? (
@@ -45,7 +38,6 @@ const Home = () => {
                     </Suspense>
                 </div>
             )}
-
             <ToastContainer />
         </div>
     );

@@ -7,6 +7,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../providers/AuthProvider";
 import { updateProfile } from "firebase/auth";
 import auth from "../firebase/firebase.config";
+import { toast, ToastContainer } from "react-toastify";
 
 const AuthenticationModal = () => {
     const { modalContent, setModalContent, setShowModal } = useContext(AuthContext);
@@ -87,15 +88,34 @@ const AuthenticationModal = () => {
         const email = formData.email;
         const password = formData.password;
 
-        if(!emailRegex.test(email)) {
+        if (!emailRegex.test(email)) {
             setErrorMessage("Please enter a valid email.");
             return;
         }
 
         // sign in the user with email and password
         signInUser(email, password)
-        .then(() => setShowModal(false))
-        .catch(error => console.log(error.message));
+            .then(() => setShowModal(false))
+            .catch(error => {
+                const errorCode = error.code;
+                if (errorCode === "auth/invalid-email") {
+                    toast.error("The email address is not valid.")
+                } else if (errorCode === "auth/user-not-found") {
+                    toast.error("No user found with this email. Please sign up first.");
+                } else if (errorCode === "auth/wrong-password") {
+                    toast.error("Incorrect password. Please try again.");
+                } else if (errorCode === "auth/too-many-requests") {
+                    toast.error("Too many failed attempts. Try again later.");
+                } else if (errorCode === "auth/network-request-failed") {
+                    toast.error("Network error. Please check your internet connection.");
+                } else if (errorCode === "auth/email-already-in-use") {
+                    toast.error("This email is already in use. Try signing in instead.");
+                } else if (errorCode === "auth/invalid-credential") {
+                    toast.error("Invalid email or password. Please check your details.");
+                } else if (errorCode === "auth/account-exists-with-different-credential") {
+                    toast.error("An account already exists with this email but a different sign-in method. Try using that method.");
+                }
+            });
     }
 
     return (
@@ -253,6 +273,7 @@ const AuthenticationModal = () => {
 
                 }
             </div>
+            <ToastContainer />
         </div >
     );
 };
